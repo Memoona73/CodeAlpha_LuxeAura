@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeAura - Timeless Luxury Jewelry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <script>
+    function addToCart(name, price) {
+        fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, quantity: 1, subtotal: price })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                alert("Added to cart successfully!");
+                window.location.href = "/checkout";
+            } else {
+                alert("Cart error!");
+            }
+        })
+        .catch(err => console.log(err));
+    }
+    </script>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo"><h1>LuxeAura</h1></div>
+                <div class="nav-right">
+                    <ul class="nav-links">
+                        <li><a href="/" class="active">Home</a></li>
+                        <li><a href="/collections">Collections</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                    <a href="/products" class="contact-btn">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-wrapper">
+                <div class="hero-left">
+                    <h1 class="hero-title">Timeless Beauty<br>in Every Sparkle</h1>
+                    <p class="hero-description">
+                        Discover our exquisite collection of handcrafted jewelry,
+                        where every piece tells a story of elegance, sophistication,
+                        and timeless beauty. Each creation is meticulously designed
+                        to celebrate life's most precious moments.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="/collections" class="btn btn-primary">Explore Collection</a>
+                        <a href="/about" class="btn btn-outline">Our Story</a>
+                    </div>
+                    <div class="hero-features">
+                        <div class="feature-item"><span class="feature-icon">👑</span><span>Luxury Craftsmanship</span></div>
+                        <div class="feature-item"><span class="feature-icon">💎</span><span>Authentic Materials</span></div>
+                        <div class="feature-item"><span class="feature-icon">💖</span><span>Timeless Designs</span></div>
+                        <div class="feature-item"><span class="feature-icon">🥇</span><span>Award-Winning</span></div>
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <div class="hero-image-wrapper">
+                        <img src="/images/hero.jpg" alt="Luxury Jewelry" class="hero-image rounded-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Section -->
+    <section class="why-choose">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose LuxeAura</h2>
+                <p class="section-subtitle">Experience the difference of true luxury craftsmanship</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-large">💎</div>
+                    <h3>Premium Quality</h3>
+                    <p>Each piece is crafted from the finest materials including 18K gold, platinum, and ethically sourced diamonds.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-large">🛡️</div>
+                    <h3>Lifetime Warranty</h3>
+                    <p>We stand behind our craftsmanship with a comprehensive lifetime warranty on all our jewelry pieces.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-large">📜</div>
+                    <h3>Certified Diamonds</h3>
+                    <p>All diamonds come with certification from GIA or IGI, ensuring authenticity and quality.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-large">🎁</div>
+                    <h3>Luxury Packaging</h3>
+                    <p>Every purchase arrives in our signature luxury packaging, perfect for gifting or safekeeping.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LuxeAura</h3>
+                    <p>Crafting timeless elegance since 2010</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/collections">Collections</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: info@luxeaura.com</p>
+                    <p>Phone: +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LuxeAura. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

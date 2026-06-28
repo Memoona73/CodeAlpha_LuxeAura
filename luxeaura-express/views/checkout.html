@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout – LuxeAura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#080808;color:#e5e7eb;font-family:'Poppins',sans-serif;min-height:100vh}
+        .navbar{background:rgba(0,0,0,0.95);padding:18px 40px;position:sticky;top:0;z-index:1000;border-bottom:1px solid rgba(245,158,11,0.2);backdrop-filter:blur(10px);display:flex;justify-content:space-between;align-items:center}
+        .logo h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer}
+        .nav-links{display:flex;list-style:none;gap:28px}
+        .nav-links a{color:#9ca3af;text-decoration:none;font-size:14px;font-weight:500;transition:color 0.3s}
+        .nav-links a:hover{color:#f59e0b}
+        .contact-btn{background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#000;padding:9px 22px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600}
+        .checkout-page{padding:50px 0 80px}
+        .container{max-width:1080px;margin:0 auto;padding:0 30px}
+        .checkout-title{font-family:'Playfair Display',serif;font-size:38px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:8px}
+        .checkout-subtitle{text-align:center;color:#6b7280;font-size:14px;margin-bottom:40px}
+        .step-bar{display:flex;align-items:center;justify-content:center;max-width:500px;margin:0 auto 48px}
+        .step-item{display:flex;flex-direction:column;align-items:center;gap:8px}
+        .step-dot{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#4b5563;transition:all 0.4s}
+        .step-item.active .step-dot{background:linear-gradient(135deg,#f59e0b,#fcd34d);border-color:#f59e0b;color:#000;box-shadow:0 0 24px rgba(245,158,11,0.5)}
+        .step-item.done .step-dot{background:linear-gradient(135deg,#10b981,#34d399);border-color:#10b981;color:#fff}
+        .step-label{font-size:11px;color:#4b5563;font-weight:500;letter-spacing:0.5px}
+        .step-item.active .step-label{color:#f59e0b}
+        .step-item.done .step-label{color:#10b981}
+        .step-line{flex:1;height:2px;margin:0 8px;margin-bottom:22px;background:rgba(255,255,255,0.07);position:relative;overflow:hidden}
+        .step-line-fill{height:100%;width:0%;background:linear-gradient(90deg,#10b981,#34d399);transition:width 0.6s ease}
+        .checkout-layout{display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:start}
+        .order-panel{background:rgba(245,158,11,0.03);border:1px solid rgba(245,158,11,0.15);border-radius:18px;overflow:hidden;position:sticky;top:90px}
+        .order-panel-hdr{padding:16px 22px;border-bottom:1px solid rgba(245,158,11,0.1);font-size:11px;font-weight:600;color:#f59e0b;letter-spacing:2px;text-transform:uppercase}
+        .order-product-row{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.05)}
+        .order-pimg{width:60px;height:60px;border-radius:10px;object-fit:cover;border:1px solid rgba(245,158,11,0.2);background:#1a1a1a;flex-shrink:0}
+        .order-pname{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+        .order-pmeta{font-size:11px;color:#6b7280;line-height:1.8}
+        .tbadge{display:inline-block;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);color:#f59e0b;border-radius:4px;padding:1px 7px;font-size:10px;font-weight:600;margin-right:3px}
+        .order-lines{padding:12px 22px;border-bottom:1px solid rgba(255,255,255,0.05)}
+        .order-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:#9ca3af}
+        .order-line span:last-child{color:#e5e7eb;font-weight:500}
+        .order-line.free span:last-child{color:#10b981}
+        .order-total-row{display:flex;justify-content:space-between;align-items:center;padding:16px 22px}
+        .order-total-lbl{font-size:14px;font-weight:600;color:#fff}
+        .order-total-amt{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .empty-cart{text-align:center;padding:24px;color:#6b7280;font-size:13px}
+        .empty-cart a{color:#f59e0b;text-decoration:none}
+        .step-panel{display:none;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:36px;animation:fadeIn 0.35s ease}
+        .step-panel.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+        .panel-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:5px}
+        .panel-sub{font-size:13px;color:#6b7280;margin-bottom:26px}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        .form-group{margin-bottom:18px}
+        .form-label{display:block;font-size:12px;font-weight:500;color:#9ca3af;margin-bottom:7px}
+        .req{color:#f59e0b}
+        .iw{position:relative}
+        .input-field{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 16px;font-family:'Poppins',sans-serif;font-size:14px;color:#fff;outline:none;transition:border-color 0.3s,box-shadow 0.3s}
+        .input-field:focus{border-color:rgba(245,158,11,0.5);box-shadow:0 0 0 3px rgba(245,158,11,0.07)}
+        .input-field.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,0.07)}
+        .input-field::placeholder{color:#374151}
+        .iicon{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
+        .has-icon{padding-right:40px}
+        .errmsg{font-size:11px;color:#ef4444;margin-top:5px;display:none}
+        .errmsg.show{display:block}
+        select.input-field{cursor:pointer}
+        select.input-field option{background:#111}
+        .card-types{display:flex;gap:8px;margin-top:10px}
+        .cbadge{padding:4px 14px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:12px;color:#6b7280;cursor:pointer;transition:all 0.2s}
+        .cbadge.active{background:rgba(245,158,11,0.1);border-color:#f59e0b;color:#f59e0b}
+        .sec-badge{display:flex;align-items:center;gap:8px;background:rgba(6,214,160,0.07);border:1px solid rgba(6,214,160,0.18);border-radius:8px;padding:10px 14px;margin-bottom:22px;font-size:12px;color:#06d6a0}
+        .card-scene{width:100%;max-width:320px;height:190px;perspective:900px;margin:0 auto 26px}
+        .card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.7s cubic-bezier(0.4,0,0.2,1)}
+        .card-3d.flipped{transform:rotateY(180deg)}
+        .card-face{position:absolute;inset:0;border-radius:15px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+        .card-front{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);border:1px solid rgba(245,158,11,0.3);box-shadow:0 20px 50px rgba(0,0,0,0.6);padding:20px 24px}
+        .card-front::before{content:'';position:absolute;top:-50px;right:-30px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.1) 0%,transparent 70%)}
+        .cgoldbar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#f59e0b,#fcd34d,transparent)}
+        .ctop{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:1}
+        .cchip{width:38px;height:28px;border-radius:5px;background:linear-gradient(135deg,#fcd34d,#f59e0b,#d97706);border:1px solid rgba(255,255,255,0.2);position:relative}
+        .cchip::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(0,0,0,0.2);transform:translateY(-50%)}
+        .cchip::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(0,0,0,0.2);transform:translateX(-50%)}
+        .cbrand{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .cnum{font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:#fff;letter-spacing:3px;margin-bottom:14px;text-shadow:0 2px 8px rgba(0,0,0,0.5);position:relative;z-index:1}
+        .cbot{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1}
+        .clbl{font-size:8px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+        .cholder{font-size:12px;font-weight:600;color:#fff;letter-spacing:1px;text-transform:uppercase;max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .cexpiry{font-family:'Courier New',monospace;font-size:12px;color:#fff;letter-spacing:1px}
+        .card-back{background:linear-gradient(135deg,#0f3460,#16213e,#1a1a2e);border:1px solid rgba(245,158,11,0.15);transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center}
+        .magstrip{width:100%;height:42px;background:linear-gradient(180deg,#1a1a1a,#000,#1a1a1a);margin-bottom:18px}
+        .cbackinner{padding:0 24px}
+        .cbackbrand{font-family:'Playfair Display',serif;font-size:11px;color:rgba(245,158,11,0.5);text-align:right;margin-bottom:5px}
+        .cvvstrip{background:rgba(255,255,255,0.07);border-radius:5px;padding:8px 12px;display:flex;justify-content:flex-end;border:1px solid rgba(255,255,255,0.06)}
+        .cvvval{font-family:'Courier New',monospace;font-size:15px;font-weight:700;color:#fff;letter-spacing:4px}
+        .btn-row{display:flex;gap:12px;margin-top:8px}
+        .btn-back{flex:1;padding:13px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:#9ca3af;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+        .btn-back:hover{background:rgba(255,255,255,0.08);color:#fff}
+        .btn-next{flex:2;padding:13px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#fcd34d);border:none;color:#000;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s}
+        .btn-next:hover{opacity:0.88;transform:translateY(-1px)}
+        .btn-next:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+        .success-wrap{display:none;text-align:center;padding:60px 20px;animation:fadeIn 0.5s ease}
+        .success-wrap.show{display:block}
+        .success-icon{font-size:72px;margin-bottom:20px;animation:bounceIn 0.6s ease}
+        @keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+        .success-wrap h2{font-family:'Playfair Display',serif;font-size:34px;color:#f59e0b;margin-bottom:10px}
+        .success-wrap p{color:#6b7280;font-size:15px;line-height:1.8}
+        .oid-badge{display:inline-block;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);color:#f59e0b;padding:8px 24px;border-radius:30px;font-size:14px;font-weight:600;margin:18px 0}
+        .success-pcard{display:inline-flex;align-items:center;gap:14px;background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:14px;padding:14px 22px;margin:14px auto;text-align:left}
+        .success-pcard img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid rgba(245,158,11,0.2);background:#1a1a1a}
+        .success-pcard strong{display:block;color:#fff;font-size:14px;margin-bottom:3px}
+        .success-pcard span{color:#9ca3af;font-size:11px}
+        .success-amt{font-family:'Playfair Display',serif;font-size:19px;background:linear-gradient(135deg,#f59e0b,#fcd34d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-top:3px}
+        .footer{background:#050505;border-top:1px solid rgba(245,158,11,0.1);padding:26px 0;margin-top:80px;text-align:center}
+        .footer p{font-size:13px;color:#374151}
+        @media(max-width:860px){.checkout-layout{grid-template-columns:1fr}.order-panel{position:relative;top:0}}
+        @media(max-width:560px){.navbar{padding:16px 20px}.nav-links{display:none}.form-row{grid-template-columns:1fr}.step-panel{padding:24px 20px}.container{padding:0 16px}}
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo"><h1 onclick="location.href='/'">LuxeAura</h1></div>
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/collections">Collections</a></li>
+        <li><a href="/products">Products</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+    <a href="/contact" class="contact-btn">Contact Us</a>
+</nav>
+
+<div class="checkout-page">
+<div class="container">
+
+    <h1 class="checkout-title">Secure Checkout</h1>
+    <p class="checkout-subtitle">Complete your purchase in just a few steps</p>
+
+    <div class="step-bar">
+        <div class="step-item active" id="si1">
+            <div class="step-dot">1</div>
+            <span class="step-label">Address</span>
+        </div>
+        <div class="step-line"><div class="step-line-fill" id="line1"></div></div>
+        <div class="step-item" id="si2">
+            <div class="step-dot">2</div>
+            <span class="step-label">Payment</span>
+        </div>
+        <div class="step-line"><div class="step-line-fill" id="line2"></div></div>
+        <div class="step-item" id="si3">
+            <div class="step-dot">✓</div>
+            <span class="step-label">Confirm</span>
+        </div>
+    </div>
+
+    <div class="success-wrap" id="successWrap">
+        <div class="success-icon">💎</div>
+        <h2>Order Confirmed!</h2>
+        <p>Thank you for shopping with LuxeAura.<br>Your luxury piece is being prepared with love.</p>
+        <div class="oid-badge" id="oidDisplay">Order #LA-000000</div>
+        <div id="successPCard"></div>
+        <p style="color:#4b5563;margin-top:8px;">Confirmation will be sent to your email shortly.</p>
+        <br><br>
+        <a href="/" style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#fcd34d);color:#000;padding:13px 40px;border-radius:10px;font-weight:700;text-decoration:none;font-family:'Poppins',sans-serif;">← Back to Home</a>
+    </div>
+
+    <div class="checkout-layout" id="checkoutLayout">
+        <div>
+
+            <!-- STEP 1 -->
+            <div class="step-panel active" id="panel1">
+                <div class="panel-title">Delivery Address</div>
+                <div class="panel-sub">Where should we deliver your order?</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name <span class="req">*</span></label>
+                        <div class="iw"><input type="text" class="input-field has-icon" id="firstName" placeholder="John"><span class="iicon">👤</span></div>
+                        <div class="errmsg" id="e-firstName">Please enter your first name.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name <span class="req">*</span></label>
+                        <div class="iw"><input type="text" class="input-field" id="lastName" placeholder="Doe"></div>
+                        <div class="errmsg" id="e-lastName">Please enter your last name.</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address <span class="req">*</span></label>
+                    <div class="iw"><input type="email" class="input-field has-icon" id="email" placeholder="john@example.com"><span class="iicon">✉️</span></div>
+                    <div class="errmsg" id="e-email">Please enter a valid email.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number <span class="req">*</span></label>
+                    <div class="iw"><input type="tel" class="input-field has-icon" id="phone" placeholder="+92 300 0000000"><span class="iicon">📞</span></div>
+                    <div class="errmsg" id="e-phone">Please enter your phone number.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Street Address <span class="req">*</span></label>
+                    <div class="iw"><input type="text" class="input-field has-icon" id="address" placeholder="House # 12, Street 5, Block A"><span class="iicon">🏠</span></div>
+                    <div class="errmsg" id="e-address">Please enter your address.</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">City <span class="req">*</span></label>
+                        <div class="iw"><input type="text" class="input-field" id="city" placeholder="Lahore"></div>
+                        <div class="errmsg" id="e-city">Please enter your city.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Country <span class="req">*</span></label>
+                        <div class="iw">
+                            <select class="input-field" id="country">
+                                <option value="">Select Country</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="India">India</option>
+                                <option value="UAE">UAE</option>
+                                <option value="USA">USA</option>
+                                <option value="UK">UK</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="errmsg" id="e-country">Please select your country.</div>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-next" onclick="goStep2()">Continue to Payment &nbsp;→</button>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step-panel" id="panel2">
+                <div class="panel-title">Payment Details</div>
+                <div class="panel-sub">Your card information is fully encrypted</div>
+                <div class="sec-badge"><span>🔒</span><span>256-bit SSL encrypted — fully secure</span></div>
+                <div class="card-scene">
+                    <div class="card-3d" id="card3d">
+                        <div class="card-face card-front">
+                            <div class="cgoldbar"></div>
+                            <div class="ctop">
+                                <div class="cchip"></div>
+                                <div class="cbrand">LuxeAura</div>
+                            </div>
+                            <div class="cnum" id="cNumDisp">•••• &nbsp;•••• &nbsp;•••• &nbsp;••••</div>
+                            <div class="cbot">
+                                <div><div class="clbl">Card Holder</div><div class="cholder" id="cNameDisp">FULL NAME</div></div>
+                                <div><div class="clbl">Expires</div><div class="cexpiry" id="cExpDisp">MM/YY</div></div>
+                            </div>
+                        </div>
+                        <div class="card-face card-back">
+                            <div class="magstrip"></div>
+                            <div class="cbackinner">
+                                <div class="cbackbrand">LuxeAura</div>
+                                <div class="cvvstrip"><div class="cvvval" id="cvvDisp">•••</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Card Number <span class="req">*</span></label>
+                    <div class="iw"><input type="text" class="input-field has-icon" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="off"><span class="iicon">💳</span></div>
+                    <div class="card-types">
+                        <span class="cbadge active" onclick="pickCard(this)">Visa</span>
+                        <span class="cbadge" onclick="pickCard(this)">Mastercard</span>
+                        <span class="cbadge" onclick="pickCard(this)">Amex</span>
+                    </div>
+                    <div class="errmsg" id="e-cardNumber">Enter a valid 16-digit card number.</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cardholder Name <span class="req">*</span></label>
+                    <div class="iw"><input type="text" class="input-field has-icon" id="cardName" placeholder="John Doe" autocomplete="off"><span class="iicon">👤</span></div>
+                    <div class="errmsg" id="e-cardName">Enter cardholder name.</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Expiry Date <span class="req">*</span></label>
+                        <div class="iw"><input type="text" class="input-field" id="cardExpiry" placeholder="MM/YY" maxlength="5" autocomplete="off"></div>
+                        <div class="errmsg" id="e-cardExpiry">Enter valid expiry (MM/YY).</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CVV <span class="req">*</span></label>
+                        <div class="iw"><input type="text" class="input-field has-icon" id="cardCvv" placeholder="123" maxlength="3" autocomplete="off"><span class="iicon">🔒</span></div>
+                        <div class="errmsg" id="e-cardCvv">Enter valid 3-digit CVV.</div>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-back" onclick="goStep(1)">← Back</button>
+                    <button class="btn-next" id="payBtn" onclick="placeOrder()">Place Order &nbsp;💎</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="order-panel">
+            <div class="order-panel-hdr">💎 Order Summary</div>
+            <div id="orderSummaryBody"></div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<footer class="footer"><p>© 2026 LuxeAura. All rights reserved.</p></footer>
+
+<script>
+const cart = (() => { try { return JSON.parse(localStorage.getItem('luxeaura_cart')); } catch(e) { return null; } })();
+const sumBody = document.getElementById('orderSummaryBody');
+
+function fmtPrice(cur, amt) { return (cur || '₹') + Number(amt).toLocaleString('en-IN'); }
+
+if (cart) {
+    let badges = `<span class="tbadge">${cart.color || 'Gold'}</span><span class="tbadge">${cart.variant || 'Standard'}</span><span class="tbadge">Qty: ${cart.quantity || 1}</span>`;
+    if (cart.giftBox) badges += `<span class="tbadge">🎁 Gift Box</span>`;
+    sumBody.innerHTML = `
+        <div class="order-product-row">
+            <img class="order-pimg" src="${cart.image || 'images/necklace.jpg'}" alt="${cart.name}" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+            <div>
+                <div class="order-pname">${cart.name}</div>
+                <div class="order-pmeta">${cart.type}<br>${badges}</div>
+            </div>
+        </div>
+        <div class="order-lines">
+            <div class="order-line"><span>Item × ${cart.quantity}</span><span>${fmtPrice(cart.currency, cart.totalPrice)}</span></div>
+            ${cart.giftBox ? `<div class="order-line"><span>Gift Box</span><span>${fmtPrice(cart.currency, 250 * cart.quantity)}</span></div>` : ''}
+            <div class="order-line free"><span>Shipping</span><span>Free</span></div>
+            <div class="order-line free"><span>Insurance</span><span>Free</span></div>
+        </div>
+        <div class="order-total-row">
+            <span class="order-total-lbl">Total</span>
+            <span class="order-total-amt">${fmtPrice(cart.currency, cart.totalPrice)}</span>
+        </div>`;
+} else {
+    sumBody.innerHTML = `<div class="empty-cart">No items in cart.<br><a href="/products">← Browse Products</a></div>`;
+}
+
+let currentStep = 1;
+
+function goStep(n) {
+    document.getElementById('panel' + currentStep).classList.remove('active');
+    [1,2].forEach(i => {
+        const s = document.getElementById('si' + i);
+        s.classList.remove('done','active');
+        if (i < n) s.classList.add('done');
+    });
+    document.getElementById('line1').style.width = n > 1 ? '100%' : '0%';
+    document.getElementById('line2').style.width = n > 2 ? '100%' : '0%';
+    currentStep = n;
+    document.getElementById('si' + n).classList.add('active');
+    document.getElementById('panel' + n).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goStep2() { if (!validateAddress()) return; goStep(2); }
+
+function validateAddress() {
+    const checks = [
+        {id:'firstName', test: v => v.trim().length >= 2},
+        {id:'lastName',  test: v => v.trim().length >= 2},
+        {id:'email',     test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+        {id:'phone',     test: v => v.trim().length >= 7},
+        {id:'address',   test: v => v.trim().length >= 5},
+        {id:'city',      test: v => v.trim().length >= 2},
+        {id:'country',   test: v => v !== ''},
+    ];
+    let ok = true;
+    checks.forEach(c => {
+        const el = document.getElementById(c.id);
+        const er = document.getElementById('e-' + c.id);
+        if (!c.test(el.value)) { el.classList.add('err'); er.classList.add('show'); ok = false; }
+        else { el.classList.remove('err'); er.classList.remove('show'); }
+    });
+    return ok;
+}
+
+document.getElementById('cardNumber').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').substring(0,16);
+    this.value = v.match(/.{1,4}/g)?.join(' ') || v;
+    let p = v.match(/.{1,4}/g) || [];
+    let d = [];
+    for(let i=0;i<4;i++) d.push(p[i]?p[i].padEnd(4,'•'):'••••');
+    document.getElementById('cNumDisp').innerHTML = d.join(' &nbsp;');
+    clearE('cardNumber');
+});
+document.getElementById('cardName').addEventListener('input', function() {
+    document.getElementById('cNameDisp').textContent = this.value.toUpperCase() || 'FULL NAME';
+    clearE('cardName');
+});
+document.getElementById('cardExpiry').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').substring(0,4);
+    this.value = v.length>=3 ? v.substring(0,2)+'/'+v.substring(2) : v;
+    document.getElementById('cExpDisp').textContent = this.value || 'MM/YY';
+    clearE('cardExpiry');
+});
+document.getElementById('cardCvv').addEventListener('focus',  ()=>document.getElementById('card3d').classList.add('flipped'));
+document.getElementById('cardCvv').addEventListener('blur',   ()=>document.getElementById('card3d').classList.remove('flipped'));
+document.getElementById('cardCvv').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').substring(0,3);
+    this.value = v;
+    document.getElementById('cvvDisp').textContent = v ? v.padEnd(3,'•') : '•••';
+    clearE('cardCvv');
+});
+
+function pickCard(el) {
+    document.querySelectorAll('.cbadge').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function validatePayment() {
+    let ok = true;
+    const num = document.getElementById('cardNumber').value.replace(/\s/g,'');
+    if(!/^\d{16}$/.test(num)){showE('cardNumber','Enter a valid 16-digit card number.');ok=false;}else clearE('cardNumber');
+    const nm = document.getElementById('cardName').value.trim();
+    if(!nm||nm.length<2||!/^[a-zA-Z\s]+$/.test(nm)){showE('cardName','Enter a valid cardholder name.');ok=false;}else clearE('cardName');
+    const exp = document.getElementById('cardExpiry').value;
+    const em = exp.match(/^(\d{2})\/(\d{2})$/);
+    if(!em){showE('cardExpiry','Enter expiry as MM/YY.');ok=false;}
+    else {
+        const mo=parseInt(em[1]),yr=parseInt('20'+em[2]),now=new Date();
+        if(mo<1||mo>12){showE('cardExpiry','Month must be 01-12.');ok=false;}
+        else if(yr<now.getFullYear()||(yr===now.getFullYear()&&mo<now.getMonth()+1)){showE('cardExpiry','Card is expired.');ok=false;}
+        else clearE('cardExpiry');
+    }
+    if(!/^\d{3}$/.test(document.getElementById('cardCvv').value)){showE('cardCvv','Enter a valid 3-digit CVV.');ok=false;}else clearE('cardCvv');
+    return ok;
+}
+
+function showE(id,msg){const el=document.getElementById(id),er=document.getElementById('e-'+id);if(el)el.classList.add('err');if(er){er.textContent=msg;er.classList.add('show');}}
+function clearE(id){const el=document.getElementById(id),er=document.getElementById('e-'+id);if(el)el.classList.remove('err');if(er)er.classList.remove('show');}
+
+function placeOrder() {
+    if (!validatePayment()) return;
+    const btn = document.getElementById('payBtn');
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    const orderData = {
+        first_name:   document.getElementById('firstName').value,
+        last_name:    document.getElementById('lastName').value,
+        email:        document.getElementById('email').value,
+        phone:        document.getElementById('phone').value,
+        address:      document.getElementById('address').value,
+        city:         document.getElementById('city').value,
+        country:      document.getElementById('country').value,
+        card_holder:  document.getElementById('cardName').value,
+        card_last4:   document.getElementById('cardNumber').value.replace(/\s/g,'').slice(-4),
+        card_expiry:  document.getElementById('cardExpiry').value,
+        card_type:    document.querySelector('.cbadge.active')?.textContent || 'Visa',
+        product_name: cart ? cart.name : 'Gold Choker Set',
+        quantity:     cart ? cart.quantity : 1,
+        unit_price:   cart ? cart.unitPrice : 105000,
+        gift_box:     cart ? cart.giftBox : false,
+        total_price:  cart ? cart.totalPrice : 105000
+    };
+
+    const params = Object.keys(orderData).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(orderData[k])).join('&');
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'php/save_/checkout', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        try {
+            const data = JSON.parse(xhr.responseText);
+            if (data.success) { showSuccess(data.order_number); }
+            else { alert('Error: ' + data.message); btn.textContent = 'Place Order 💎'; btn.disabled = false; }
+        } catch(e) { showSuccess(null); }
+    };
+    xhr.onerror = function() { alert('Connection failed!'); btn.textContent = 'Place Order 💎'; btn.disabled = false; };
+    xhr.send(params);
+}
+
+function showSuccess(orderNum) {
+    document.getElementById('line1').style.width = '100%';
+    document.getElementById('line2').style.width = '100%';
+    document.getElementById('si2').classList.remove('active');
+    document.getElementById('si2').classList.add('done');
+    document.getElementById('si3').classList.add('active','done');
+    document.getElementById('checkoutLayout').style.display = 'none';
+    document.getElementById('successWrap').classList.add('show');
+    const oid = orderNum || ('LA-' + Math.floor(100000+Math.random()*900000));
+    document.getElementById('oidDisplay').textContent = 'Order #' + oid;
+    if (cart) {
+        const cur = cart.currency || '₹';
+        let badges = `${cart.color} · ${cart.variant}`;
+        if (cart.giftBox) badges += ' · 🎁 Gift Box';
+        document.getElementById('successPCard').innerHTML = `
+            <div class="success-pcard">
+                <img src="${cart.image}" alt="${cart.name}" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                <div>
+                    <strong>${cart.name}</strong>
+                    <span>${cart.type} · Qty: ${cart.quantity}<br>${badges}</span>
+                    <span class="success-amt">${cur}${Number(cart.totalPrice).toLocaleString('en-IN')}</span>
+                </div>
+            </div>`;
+        localStorage.removeItem('luxeaura_cart');
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
